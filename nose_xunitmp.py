@@ -60,8 +60,14 @@ class XunitMP(Xunit):
             u'<testsuite name="nosetests" tests="%(total)d" '
             u'errors="%(errors)d" failures="%(failures)d" '
             u'skip="%(skipped)d">' % self.stats)
-        self.error_report_file.write(u''.join([self._forceUnicode(e)
-                                               for e in self.errorlist]))
+        if hasattr(self, '_forceUnicode'):
+            self.error_report_file.write(
+                u''.join([self._forceUnicode(e) for e in self.errorlist])
+            )
+        else:
+            # Nose before 1.3 didn't have _forceUnicode
+            self.error_report_file.write(u''.join(self.errorlist))
+
         self.error_report_file.write(u'</testsuite>')
         self.error_report_file.close()
         if self.config.verbosity > 1:
